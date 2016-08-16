@@ -15,7 +15,6 @@ hsv = color.rgb2hsv(image)
 io.imshow(hsv[:,:,0])
 io.show();
 
-
 # edges = filters.sobel(image[:,:,1])
 # # io.imshow(image)
 # io.imshow(edges)
