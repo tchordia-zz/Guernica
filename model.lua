@@ -1,12 +1,13 @@
 require('torch')
 require('nn')
 require('image')
+local load = require('load')
 
 print("building the model")
 local nfeats = 3
 local height = 96
 local width = height --assume square
-local num_classes = 2
+local num_classes = load.num_classes
 
 local nstates = {16, 32, 64}
 local filtsize = {5,3,3}
@@ -23,7 +24,7 @@ end
 -- maybe try updating with 0 padding
 ----------------------------------------------------------------------
 print(sys.COLORS.red ..  '==> construct CNN')
-CNN = nn.Sequential()
+local CNN = nn.Sequential()
 
 -- stage 1: conv+max
 --3 x height x width
@@ -63,7 +64,7 @@ for _,layer in ipairs(CNN.modules) do
    end
 end
 
-model = nn.Sequential()
+local model = nn.Sequential()
 model:add(CNN)
 model:add(classifier)
 

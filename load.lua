@@ -4,12 +4,10 @@ require 'image'
 require 'csvigo'
 
 -- set constants
-local imwidth = 100
-local imheight = 100
+local imwidth = 96
+local imheight = 96
 local numchannels = 3
-local numcategories = 10
-local limit = 1000
-local numsamples = 1000
+local numsamples = 999
 
 --set wd
 swd = lfs.currentdir() .. '/train_scaled/'
@@ -18,7 +16,7 @@ pwd = swd --lfs.currentdir() .. '/train_4/'
 print(pwd)
 
 local shouldsave = true;
-i = 1
+i = 0
 local trainset = {}
 local file2index = {}
 
@@ -27,7 +25,7 @@ trainset.data = {} --torch.Tensor(numsamples, numchannels, imwidth, imheight):ze
 
 print("done creating Tensors!")
 for file in paths.files(pwd) do
-    if(file:find('.jpg$') and i < limit) then
+    if(file:find('.jpg$') and i <= numsamples) then
         temp_im = image.scale(image.load(pwd .. file), imwidth, imheight)
         if (temp_im:size(1) == 1) then
             print("is grayscale...")
@@ -37,9 +35,9 @@ for file in paths.files(pwd) do
 
         if temp_im:size(1) == numchannels and temp_im:size(2) == imheight and temp_im:size(3) == imwidth then
             -- if shouldsave then image.save(swd .. file, temp_im) end
+            i = i + 1
             trainset.data[i] = temp_im
             file2index[file] = i
-            i = i + 1
         else
             print("image wrong size: ")
             print(temp_im:size())
@@ -78,20 +76,21 @@ for i = 1, #labels do
     end
 end
 
-final_labels = {}
+
+-- local final_labels = {}
 
 -- convert each number from index2val into a tensor of size numArtists
-for key, value in pairs(index2val) do
-    local tens = torch.Tensor(numArtists):zero()
-    tens:indexFill(1,torch.LongTensor{value},1)
-    final_labels[key] = tens
-end
+-- for key, value in pairs(index2val) do
+--     local tens = torch.Tensor(numArtists):zero()
+--     tens:indexFill(1,torch.LongTensor{value},1)
+--     final_labels[key] = tens
+-- end
 
-trainset.labels = final_labels
+trainset.labels = index2val
 
 setmetatable(trainset, {
   __index = function(self,i)
-    return {self.data[i], self.labels[i]}
+    return {self.data[i + 1], self.labels[i + 1]}
   end
 })
 
@@ -109,4 +108,4 @@ print(trainset.size(trainset))
 -- print(authors)
 -- print(index2val)
 
-return {trainset = trainset}
+return {trainset = trainset, num_classes = numArtists}
