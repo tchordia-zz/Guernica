@@ -5,7 +5,7 @@ local load = require('load')
 
 print("building the model")
 local nfeats = 3
-local height = 96
+local height = 64
 local width = height --assume square
 local num_classes = load.num_classes
 

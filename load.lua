@@ -4,18 +4,20 @@ require 'image'
 require 'csvigo'
 
 -- set constants
-local imwidth = 96
-local imheight = 96
+local imwidth = 64
+local imheight = imwidth --assume square
 local numchannels = 3
-local numsamples = 999
+local numsamples = 11013
 
 --set wd
-swd = lfs.currentdir() .. '/train_scaled/'
-pwd = swd --lfs.currentdir() .. '/train_4/'
+swd = lfs.currentdir() .. '/train_1_scaled/'
+pwd = swd--lfs.currentdir() .. '/train_3/'
+
+lfs.mkdir(swd)
 
 print(pwd)
 
-local shouldsave = true;
+local shouldsave = false;
 i = 0
 local trainset = {}
 local file2index = {}
@@ -25,16 +27,19 @@ trainset.data = {} --torch.Tensor(numsamples, numchannels, imwidth, imheight):ze
 
 print("done creating Tensors!")
 for file in paths.files(pwd) do
-    if(file:find('.jpg$') and i <= numsamples) then
+  -- if pcall(function ()
+    if(file:find('.jpg$')) then
+        if i%100 == 0 then print(file) end
         temp_im = image.scale(image.load(pwd .. file), imwidth, imheight)
         if (temp_im:size(1) == 1) then
             print("is grayscale...")
             temp_im = torch.cat(torch.cat(temp_im, temp_im, 1), temp_im, 1)
-            print(temp_im.shape())
+            print(type(temp_im))
+            print(temp_im:size())
         end
 
         if temp_im:size(1) == numchannels and temp_im:size(2) == imheight and temp_im:size(3) == imwidth then
-            -- if shouldsave then image.save(swd .. file, temp_im) end
+            if shouldsave then image.save(swd .. file, temp_im) end
             i = i + 1
             trainset.data[i] = temp_im
             file2index[file] = i
@@ -43,6 +48,9 @@ for file in paths.files(pwd) do
             print(temp_im:size())
         end
     end
+  -- end) then
+  -- else print(file .. "corrupted")
+  -- end
 end
 
 print("done loading image data!")
