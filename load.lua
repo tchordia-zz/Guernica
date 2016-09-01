@@ -41,7 +41,7 @@ for file in paths.files(pwd) do
         if temp_im:size(1) == numchannels and temp_im:size(2) == imheight and temp_im:size(3) == imwidth then
             if shouldsave then image.save(swd .. file, temp_im) end
             i = i + 1
-            trainset.data[i] = temp_im
+            trainset.data[i] = file
             file2index[file] = i
         else
             print("image wrong size: ")
@@ -96,9 +96,20 @@ end
 
 trainset.labels = index2val
 
+get = function(file)
+  temp_im = image.scale(image.load(pwd .. file), imwidth, imheight)
+  if (temp_im:size(1) == 1) then
+      print("is grayscale...")
+      temp_im = torch.cat(torch.cat(temp_im, temp_im, 1), temp_im, 1)
+      print(type(temp_im))
+      print(temp_im:size())
+  end
+end
+
 setmetatable(trainset, {
   __index = function(self,i)
-    return {self.data[i + 1], self.labels[i + 1]}
+
+    return {get(self.data[i + 1]), self.labels[i + 1]}
   end
 })
 
