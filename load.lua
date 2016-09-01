@@ -29,24 +29,24 @@ print("done creating Tensors!")
 for file in paths.files(pwd) do
   -- if pcall(function ()
     if(file:find('.jpg$')) then
-        if i%100 == 0 then print(file) end
-        temp_im = image.scale(image.load(pwd .. file), imwidth, imheight)
-        if (temp_im:size(1) == 1) then
-            print("is grayscale...")
-            temp_im = torch.cat(torch.cat(temp_im, temp_im, 1), temp_im, 1)
-            print(type(temp_im))
-            print(temp_im:size())
-        end
-
-        if temp_im:size(1) == numchannels and temp_im:size(2) == imheight and temp_im:size(3) == imwidth then
-            if shouldsave then image.save(swd .. file, temp_im) end
+        -- if i%100 == 0 then print(file) end
+        -- temp_im = image.scale(image.load(pwd .. file), imwidth, imheight)
+        -- if (temp_im:size(1) == 1) then
+        --     print("is grayscale...")
+        --     temp_im = torch.cat(torch.cat(temp_im, temp_im, 1), temp_im, 1)
+        --     print(type(temp_im))
+        --     print(temp_im:size())
+        -- end
+        --
+        -- if temp_im:size(1) == numchannels and temp_im:size(2) == imheight and temp_im:size(3) == imwidth then
+        --     if shouldsave then image.save(swd .. file, temp_im) end
             i = i + 1
             trainset.data[i] = file
-            file2index[file] = i
-        else
-            print("image wrong size: ")
-            print(temp_im:size())
-        end
+        --     file2index[file] = i
+        -- else
+        --     print("image wrong size: ")
+        --     print(temp_im:size())
+        -- end
     end
   -- end) then
   -- else print(file .. "corrupted")
