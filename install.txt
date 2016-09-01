@@ -1,6 +1,7 @@
 git clone https://github.com/torch/distro.git ~/torch --recursive;
 cd ~/torch; bash install-deps;
 ./install.sh;
+source ~/.bashrc
 luarocks install csvigo
 luarocks install image
 luarocks install lfs
