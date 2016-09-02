@@ -4,10 +4,10 @@ require 'image'
 require 'csvigo'
 
 -- set constants
-local imwidth = 64
+local imwidth = 128
 local imheight = imwidth --assume square
 local numchannels = 3
-local numsamples = 11013
+local numsamples = 1000
 
 --set wd
 swd = lfs.currentdir() .. '/train_1_scaled/'
@@ -28,7 +28,7 @@ trainset.data = {} --torch.Tensor(numsamples, numchannels, imwidth, imheight):ze
 print("done creating Tensors!")
 for file in paths.files(pwd) do
   -- if pcall(function ()
-    if(file:find('.jpg$')) then
+    if(file:find('.jpg$')) and i < numsamples then
         -- if i%100 == 0 then print(file) end
         -- temp_im = image.scale(image.load(pwd .. file), imwidth, imheight)
         -- if (temp_im:size(1) == 1) then
@@ -42,7 +42,7 @@ for file in paths.files(pwd) do
         --     if shouldsave then image.save(swd .. file, temp_im) end
             i = i + 1
             trainset.data[i] = file
-        --     file2index[file] = i
+            file2index[file] = i
         -- else
         --     print("image wrong size: ")
         --     print(temp_im:size())
@@ -96,7 +96,7 @@ end
 
 trainset.labels = index2val
 
-get = function(file)
+local get = function(file)
   temp_im = image.scale(image.load(pwd .. file), imwidth, imheight)
   if (temp_im:size(1) == 1) then
       print("is grayscale...")
@@ -104,7 +104,10 @@ get = function(file)
       print(type(temp_im))
       print(temp_im:size())
   end
+  return temp_im
 end
+
+print(get("1.jpg"))
 
 setmetatable(trainset, {
   __index = function(self,i)

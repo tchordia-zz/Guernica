@@ -5,7 +5,7 @@ local load = require('load')
 
 print("building the model")
 local nfeats = 3
-local height = 64
+local height = 128
 local width = height --assume square
 local num_classes = load.num_classes
 
@@ -50,7 +50,9 @@ local classifier = nn.Sequential()
 local fcc = nstates[3] * width * width / math.pow(poolsize[1] * poolsize[2] * poolsize[3],2)
 -- stage 3: linear
 classifier:add(nn.Reshape(fcc))
+print("no error yet!")
 classifier:add(nn.Linear(fcc, num_classes))
+print("added linear!")
 
 -- stage 4 : log probabilities
 classifier:add(nn.LogSoftMax())
